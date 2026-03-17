@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VISHESH — Business Course Sales Professional</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Lato:wght@300;400;700&family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════ CSS VARIABLES ═══════════════════════════════ */
+:root {
+  --navy:#09186D; --gold:#EFBF04; --gold-m:#c9a000; --gold-soft:#f5d96b;
+  --graphite:#4D4C53; --cream:#f8f5ef; --lb:#e8f0ff;
+  --bg:var(--cream); --text:#1a1a2e; --sub:#4D4C53;
+  --card:rgba(255,255,255,0.88); --bdr:rgba(9,24,109,0.12);
+  --sh:0 8px 40px rgba(9,24,109,0.10); --inp:rgba(255,255,255,0.9);
+  --sec:#f0f4ff;
+  --cur-color:rgba(239,191,4,0.9);
+  --cur-shadow:0 0 12px 5px rgba(239,191,4,0.55),0 0 28px 10px rgba(239,191,4,0.22);
+}
+[data-theme="dark"] {
+  --bg:#080c1a; --text:#e0e6f5; --sub:#8892b0;
+  --card:rgba(12,18,42,0.94); --bdr:rgba(239,191,4,0.15);
+  --sh:0 8px 40px rgba(0,0,0,0.45); --inp:rgba(12,18,42,0.9);
+  --sec:#0b1028;
+  --cur-color:rgba(180,40,255,0.95);
+  --cur-shadow:0 0 14px 6px rgba(180,40,255,0.6),0 0 32px 12px rgba(100,0,200,0.3);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{font-family:'Lato',sans-serif;background:var(--bg);color:var(--text);transition:background .4s,color .4s;overflow-x:hidden;cursor:none}
+
+/* ═══════════════════════════════ CUSTOM CURSOR ═══════════════════════════════ */
+#cur{position:fixed;width:13px;height:13px;border-radius:50%;background:var(--cur-color);pointer-events:none;z-index:99999;transform:translate(-50%,-50%);box-shadow:var(--cur-shadow);transition:transform .1s,background .4s,box-shadow .4s}
+#cur-ring{position:fixed;width:38px;height:38px;border-radius:50%;border:1.5px solid var(--cur-color);pointer-events:none;z-index:99998;transform:translate(-50%,-50%);opacity:.6;transition:width .25s cubic-bezier(.23,1,.32,1),height .25s cubic-bezier(.23,1,.32,1),background .4s,border-color .4s}
+a,button,input,textarea{cursor:none}
+@media(max-width:767px){#cur,#cur-ring{display:none}body,a,button,input,textarea{cursor:auto}}
+
+/* ═══════════════════════════════ PIXEL LOADER ═══════════════════════════════ */
+#loader{position:fixed;inset:0;z-index:9999;background:#04081a;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s ease,filter 1s ease;overflow:hidden}
+#loader.out{opacity:0;pointer-events:none;filter:blur(12px)}
+#pixel-canvas{position:absolute;inset:0;width:100%;height:100%}
+
+.ld-content{position:relative;z-index:2;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.ld-greet{font-family:'Lato',sans-serif;font-size:.78rem;letter-spacing:.35em;text-transform:uppercase;color:rgba(239,191,4,.6);animation:fadeIn .8s ease forwards}
+.ld-name{font-family:'Playfair Display',serif;font-size:clamp(2.8rem,7vw,5.5rem);font-weight:800;color:var(--gold);letter-spacing:.15em;text-shadow:0 0 40px rgba(239,191,4,.5),0 0 80px rgba(239,191,4,.2);animation:glowPulse 2s ease-in-out infinite}
+.ld-role{font-family:'Lato',sans-serif;font-size:.82rem;color:rgba(255,255,255,.35);letter-spacing:.22em;text-transform:uppercase}
+.ld-bar{width:200px;height:2px;background:rgba(255,255,255,.08);border-radius:2px;overflow:hidden;margin-top:20px}
+.ld-fill{height:100%;width:0;background:linear-gradient(90deg,var(--gold-m),var(--gold));border-radius:2px;animation:fill 4.6s ease forwards}
+.ld-pct{font-size:.7rem;color:rgba(239,191,4,.5);letter-spacing:.2em;margin-top:6px;font-family:'Lato',sans-serif}
+
+@keyframes fill{to{width:100%}}
+@keyframes glowPulse{0%,100%{text-shadow:0 0 30px rgba(239,191,4,.4)}50%{text-shadow:0 0 60px rgba(239,191,4,.9),0 0 100px rgba(239,191,4,.4)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ═══════════════════════════════ NAV ═══════════════════════════════ */
+nav{position:fixed;top:0;left:0;right:0;z-index:800;padding:14px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.72);backdrop-filter:blur(20px);border-bottom:1px solid var(--bdr);transition:background .4s}
+[data-theme="dark"] nav{background:rgba(8,12,26,.85)}
+.logo{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--navy);letter-spacing:.1em;text-decoration:none}
+[data-theme="dark"] .logo{color:var(--gold)}
+.nav-links{display:flex;gap:26px;list-style:none;align-items:center}
+.nav-links a{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--sub);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-r{display:flex;align-items:center;gap:12px}
+.clock-tag{font-size:.76rem;background:var(--navy);color:var(--gold);padding:5px 14px;border-radius:20px;font-weight:700;letter-spacing:.05em;white-space:nowrap}
+[data-theme="dark"] .clock-tag{background:rgba(239,191,4,.15);border:1px solid rgba(239,191,4,.3)}
+.theme-btn{width:38px;height:38px;border-radius:50%;border:1.5px solid var(--bdr);background:transparent;color:var(--text);font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:background .2s,border-color .2s}
+.theme-btn:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;padding:4px}
+.hamburger span{width:23px;height:2px;background:var(--navy);border-radius:2px;display:block;transition:.25s}
+[data-theme="dark"] .hamburger span{background:var(--gold)}
+
+/* ── MOBILE MENU ── */
+.mob-menu{display:none;position:fixed;inset:0;background:rgba(9,24,109,.97);z-index:700;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mob-menu.open{display:flex}
+.mob-menu a{font-family:'Playfair Display',serif;font-size:1.9rem;color:var(--gold);text-decoration:none;transition:opacity .2s}
+.mob-menu a:hover{opacity:.65}
+.mob-close{position:absolute;top:22px;right:26px;background:none;border:none;color:rgba(255,255,255,.4);font-size:2rem}
+
+/* ═══════════════════════════════ HERO ═══════════════════════════════ */
+#hero{min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.h-bg{position:absolute;inset:0;background:url('https://i.ibb.co/NbfVFnC/sung-jinwoo-dope-3840x2160-20241.jpg') center top/cover no-repeat;animation:drift 20s ease-in-out infinite alternate;will-change:transform}
+@keyframes drift{from{transform:scale(1.04) translate(-1.5%,.5%)}to{transform:scale(1.09) translate(1.5%,-.5%)}}
+.h-ov{position:absolute;inset:0;background:linear-gradient(155deg,rgba(248,245,239,.84) 0%,rgba(232,240,255,.72) 50%,rgba(9,24,109,.58) 100%)}
+[data-theme="dark"] .h-ov{background:linear-gradient(155deg,rgba(8,12,26,.78) 0%,rgba(8,12,26,.55) 50%,rgba(9,24,109,.75) 100%)}
+.h-c{position:relative;z-index:2;text-align:center;padding:0 24px;max-width:840px}
+.h-badge{display:inline-block;font-size:.7rem;letter-spacing:.3em;text-transform:uppercase;color:var(--navy);background:rgba(239,191,4,.18);border:1px solid rgba(239,191,4,.48);padding:6px 20px;border-radius:30px;margin-bottom:20px;animation:up .7s .3s both}
+[data-theme="dark"] .h-badge{color:var(--gold)}
+.h-name{font-family:'Playfair Display',serif;font-size:clamp(3rem,9vw,7.8rem);font-weight:800;color:var(--navy);line-height:1;letter-spacing:.05em;animation:up .7s .5s both}
+[data-theme="dark"] .h-name{color:var(--gold-soft)}
+.h-tag{font-family:'Cormorant Garamond',serif;font-size:clamp(1.1rem,2.5vw,1.6rem);font-style:italic;color:var(--sub);margin-top:14px;font-weight:300;letter-spacing:.04em;animation:up .7s .7s both}
+[data-theme="dark"] .h-tag{color:#b8c5e0}
+.h-meta{font-size:.84rem;color:var(--sub);margin-top:10px;letter-spacing:.06em;animation:up .7s .9s both}
+[data-theme="dark"] .h-meta{color:#7a8baa}
+.h-cta{margin-top:32px;animation:up .7s 1.1s both}
+.btn-g{background:var(--gold);color:var(--navy);border:none;padding:16px 44px;border-radius:50px;font-family:'Lato',sans-serif;font-size:.86rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 28px rgba(239,191,4,.38);transition:transform .22s,box-shadow .22s,background .2s;text-decoration:none;display:inline-block}
+.btn-g:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 12px 40px rgba(239,191,4,.55);background:var(--gold-soft)}
+@keyframes up{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+.scroll-ind{position:absolute;bottom:28px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:5px;animation:bob 2.5s ease-in-out infinite}
+.scroll-ind span{font-size:.63rem;letter-spacing:.22em;text-transform:uppercase;color:var(--navy);opacity:.5}
+[data-theme="dark"] .scroll-ind span{color:var(--gold)}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--gold)}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(9px)}}
+
+/* ═══════════════════════════════ SECTIONS ═══════════════════════════════ */
+section{padding:100px 0}
+.wrap{max-width:1100px;margin:0 auto;padding:0 32px}
+.s-label{font-size:.68rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:9px}
+.s-title{font-family:'Playfair Display',serif;font-size:clamp(1.9rem,4vw,2.75rem);font-weight:700;color:var(--navy);line-height:1.15}
+[data-theme="dark"] .s-title{color:var(--gold-soft)}
+.s-div{width:50px;height:3px;background:linear-gradient(90deg,var(--gold),transparent);margin:16px 0 46px;border-radius:2px}
+
+/* ── ABOUT ── */
+#about{background:var(--bg)}
+.ab-grid{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.ab-img{position:relative;border-radius:22px;overflow:hidden;aspect-ratio:3/4;max-height:480px;box-shadow:var(--sh)}
+.ab-img img{width:100%;height:100%;object-fit:cover;object-position:center top}
+.ab-img-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(9,24,109,.5) 0%,transparent 55%)}
+.ab-frame{position:absolute;inset:11px;border:1.5px solid rgba(239,191,4,.35);border-radius:14px;pointer-events:none}
+.ab-text p{font-size:1rem;line-height:1.84;color:var(--sub);margin-bottom:17px}
+.ab-links{display:flex;flex-wrap:wrap;gap:13px;margin-top:26px}
+.cp{display:flex;align-items:center;gap:9px;background:var(--card);border:1px solid var(--bdr);padding:10px 20px;border-radius:40px;font-size:.83rem;color:var(--navy);font-weight:700;text-decoration:none;box-shadow:0 2px 10px rgba(9,24,109,.05);transition:background .2s,transform .2s,box-shadow .2s}
+[data-theme="dark"] .cp{color:var(--gold)}
+.cp:hover{background:var(--gold);color:var(--navy);transform:translateY(-2px);box-shadow:0 6px 22px rgba(239,191,4,.3)}
+
+/* ── TIMELINE ── */
+#experience{background:var(--sec)}
+.tl{position:relative;padding-left:34px}
+.tl::before{content:'';position:absolute;left:7px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--gold),var(--navy),transparent);opacity:.3}
+.ti{position:relative;margin-bottom:50px;opacity:0;transform:translateX(-22px);transition:opacity .6s ease,transform .6s ease}
+.ti.vis{opacity:1;transform:none}
+.td{position:absolute;left:-39px;top:5px;width:16px;height:16px;border-radius:50%;background:var(--gold);border:3px solid var(--bg);box-shadow:0 0 0 3px rgba(239,191,4,.28),0 0 16px rgba(239,191,4,.55)}
+.tc{background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:28px 30px;box-shadow:var(--sh);transition:transform .25s,box-shadow .25s}
+.tc:hover{transform:translateY(-4px);box-shadow:0 16px 50px rgba(9,24,109,.14)}
+.tc-co{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--navy)}
+[data-theme="dark"] .tc-co{color:var(--gold-soft)}
+.tc-role{font-size:.8rem;color:var(--gold);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin:4px 0 12px}
+.tc-period{font-size:.77rem;color:var(--sub);letter-spacing:.06em;margin-bottom:14px}
+.tc-list{list-style:none}
+.tc-list li{font-size:.91rem;color:var(--sub);line-height:1.65;padding:5px 0 5px 20px;position:relative;border-bottom:1px solid var(--bdr)}
+.tc-list li:last-child{border-bottom:none}
+.tc-list li::before{content:'▸';position:absolute;left:0;color:var(--gold);font-size:.73rem;top:7px}
+
+/* ── SKILLS ── */
+#skills{background:var(--bg)}
+.sk-grid{display:flex;flex-wrap:wrap;gap:13px}
+.sp{border:1.5px solid var(--bdr);border-radius:30px;padding:10px 22px;font-size:.84rem;font-weight:700;letter-spacing:.05em;color:var(--text);background:var(--card);opacity:0;transform:scale(.88);transition:opacity .4s ease,transform .4s ease,background .2s,border-color .2s,color .2s}
+.sp.vis{opacity:1;transform:scale(1)}
+.sp:hover{background:var(--gold);border-color:var(--gold);color:var(--navy);transform:translateY(-3px) scale(1.04)}
+
+/* ── EDUCATION ── */
+#education{background:var(--sec)}
+.ed-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:22px}
+.ec{background:var(--card);border:1px solid var(--bdr);border-radius:18px;padding:28px;box-shadow:var(--sh);opacity:0;transform:translateY(22px);transition:opacity .5s ease,transform .5s ease}
+.ec.vis{opacity:1;transform:none}
+.ec:hover{transform:translateY(-5px)}
+.ec-icon{font-size:1.8rem;margin-bottom:13px}
+.ec-deg{font-family:'Playfair Display',serif;font-size:1.06rem;font-weight:700;color:var(--navy);margin-bottom:4px}
+[data-theme="dark"] .ec-deg{color:var(--gold-soft)}
+.ec-sch{font-size:.83rem;color:var(--gold);font-weight:700;letter-spacing:.06em}
+.ec-yr{font-size:.77rem;color:var(--sub);margin-top:3px}
+
+/* ═══════════════════════════════ CONTACT ═══════════════════════════════ */
+#contact{background:var(--bg)}
+.ct-wrap{display:grid;grid-template-columns:1fr 1.25fr;gap:60px;align-items:start}
+.ct-info h3{font-family:'Playfair Display',serif;font-size:1.45rem;color:var(--navy);margin-bottom:8px}
+[data-theme="dark"] .ct-info h3{color:var(--gold-soft)}
+.ct-info p{font-size:.94rem;color:var(--sub);line-height:1.78;margin-bottom:26px}
+.ii{display:flex;align-items:center;gap:13px;margin-bottom:16px;padding:13px 18px;background:var(--card);border:1px solid var(--bdr);border-radius:14px;transition:transform .2s,box-shadow .2s}
+.ii:hover{transform:translateX(5px);box-shadow:var(--sh)}
+.ii-icon{width:40px;height:40px;background:var(--navy);border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+[data-theme="dark"] .ii-icon{background:rgba(239,191,4,.12);border:1px solid var(--gold)}
+.ii-lbl{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--sub);font-weight:700}
+.ii-val{font-size:.9rem;color:var(--text);font-weight:700;text-decoration:none}
+.ii-val:hover{color:var(--gold)}
+
+/* ── FORM ── */
+.cf{background:var(--card);border:1px solid var(--bdr);border-radius:24px;padding:36px;box-shadow:var(--sh)}
+.fg{margin-bottom:20px;position:relative}
+.fg label{display:block;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:700;color:var(--sub);margin-bottom:7px}
+.fg input,.fg textarea{width:100%;padding:13px 17px;border:2px solid var(--bdr);border-radius:12px;background:var(--inp);color:var(--text);font-family:'Lato',sans-serif;font-size:.91rem;outline:none;transition:border-color .25s,box-shadow .25s;-webkit-appearance:none}
+.fg input:focus,.fg textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(239,191,4,.14)}
+.fg input.ok{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.11)}
+.fg input.err,.fg textarea.err{border-color:#ef4444;box-shadow:0 0 0 3px rgba(239,68,68,.11)}
+.fg textarea{min-height:105px;resize:vertical}
+.fg textarea.ok{border-color:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.11)}
+
+/* email suffix pill */
+.email-wrap{position:relative}
+.email-suffix{display:none;position:absolute;right:12px;top:50%;transform:translateY(-50%);background:rgba(239,191,4,.18);border:1px solid rgba(239,191,4,.45);border-radius:20px;padding:3px 10px 3px 10px;font-size:.75rem;color:var(--navy);font-weight:700;align-items:center;gap:6px;white-space:nowrap}
+[data-theme="dark"] .email-suffix{color:var(--gold)}
+.email-suffix.active{display:flex}
+.es-close{background:none;border:none;font-size:.85rem;color:var(--sub);line-height:1;padding:0 2px;transition:color .2s}
+.es-close:hover{color:#ef4444}
+
+.btn-wa{width:100%;padding:16px;border:none;border-radius:50px;background:linear-gradient(90deg,var(--gold-m),var(--gold));color:var(--navy);font-family:'Lato',sans-serif;font-size:.87rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:0 6px 28px rgba(239,191,4,.38);transition:transform .22s,box-shadow .22s;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-wa:hover{transform:translateY(-3px);box-shadow:0 12px 40px rgba(239,191,4,.52)}
+
+/* ═══════════════════════════════ TOAST ═══════════════════════════════ */
+.toast{position:fixed;top:88px;right:22px;z-index:4000;background:var(--card);border:1.5px solid #ef4444;border-radius:14px;padding:15px 20px;box-shadow:0 8px 32px rgba(239,68,68,.2);display:flex;align-items:flex-start;gap:12px;transform:translateX(130%);transition:transform .35s cubic-bezier(.23,1,.32,1);min-width:270px;max-width:330px}
+.toast.show{transform:translateX(0)}
+.t-body{flex:1}
+.t-msg{font-size:.86rem;color:var(--text);font-weight:700}
+.t-retry{margin-top:8px;font-size:.78rem;background:none;border:1.5px solid #ef4444;color:#ef4444;border-radius:20px;padding:4px 13px;font-weight:700;transition:background .2s,color .2s}
+.t-retry:hover{background:#ef4444;color:#fff}
+.t-x{background:none;border:none;color:var(--sub);font-size:1.1rem;flex-shrink:0;padding:0 3px}
+
+/* ═══════════════════════════════ POPUP ═══════════════════════════════ */
+.pop-ov{position:fixed;inset:0;background:rgba(9,24,109,.45);z-index:5000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(8px)}
+.pop-ov.on{opacity:1;pointer-events:all}
+.pop-box{background:var(--card);border:1.5px solid var(--gold);border-radius:24px;padding:42px 50px;text-align:center;box-shadow:0 30px 80px rgba(239,191,4,.25);transform:scale(.85);transition:transform .3s;max-width:370px;width:90%}
+.pop-ov.on .pop-box{transform:scale(1)}
+.pop-em{font-size:2.8rem;display:block;margin-bottom:14px;animation:popB .6s ease}
+@keyframes popB{0%{transform:scale(.4) rotate(-12deg)}70%{transform:scale(1.18) rotate(3deg)}100%{transform:scale(1)}}
+.pop-title{font-family:'Playfair Display',serif;font-size:1.65rem;color:var(--gold);font-weight:700;margin-bottom:7px}
+.pop-sub{font-size:.88rem;color:var(--sub);margin-bottom:22px;line-height:1.65}
+.pop-close{background:var(--gold);color:var(--navy);border:none;padding:11px 30px;border-radius:30px;font-weight:800;font-size:.84rem;letter-spacing:.1em;transition:transform .2s}
+.pop-close:hover{transform:scale(1.06)}
+
+/* ═══════════════════════════════ FOOTER ═══════════════════════════════ */
+footer{background:var(--navy);padding:38px 32px;text-align:center}
+[data-theme="dark"] footer{background:#040714}
+.ft-name{font-family:'Playfair Display',serif;font-size:1.35rem;color:var(--gold);font-weight:700;letter-spacing:.12em;margin-bottom:7px}
+.ft-sub{font-size:.78rem;color:rgba(255,255,255,.35);letter-spacing:.14em}
+
+/* ═══════════════════════════════ REVEAL ═══════════════════════════════ */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease}
+.rv.vis{opacity:1;transform:none}
+
+/* ═══════════════════════════════ RESPONSIVE ═══════════════════════════════ */
+@media(max-width:1024px){.ab-grid,.ct-wrap{grid-template-columns:1fr}}
+@media(max-width:768px){
+  nav{padding:13px 18px}
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .wrap{padding:0 18px}
+  section{padding:68px 0}
+  .tl{padding-left:24px}
+  .td{left:-28px}
+  .tc{padding:18px 18px}
+  .cf{padding:22px 18px}
+  .ab-img{max-height:300px}
+  .h-name{font-size:clamp(2.5rem,10vw,5rem)}
+}
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cur"></div>
+<div id="cur-ring"></div>
+
+<!-- ════════ PIXEL LOADER ════════ -->
+<div id="loader">
+  <canvas id="pixel-canvas"></canvas>
+  <div class="ld-content">
+    <div class="ld-greet" id="ld-greet">—</div>
+    <div class="ld-name">VISHESH</div>
+    <div class="ld-role">Business Course Sales Professional</div>
+    <div class="ld-bar"><div class="ld-fill"></div></div>
+    <div class="ld-pct" id="ld-pct">0%</div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-body">
+    <div class="t-msg" id="toast-msg">Sorry, your contact or email is wrong.</div>
+    <button class="t-retry" onclick="closeToast()">Try Again</button>
+  </div>
+  <button class="t-x" onclick="closeToast()">✕</button>
+</div>
+
+<!-- POPUP -->
+<div class="pop-ov" id="popup">
+  <div class="pop-box">
+    <span class="pop-em">🙏</span>
+    <div class="pop-title">Thank You!</div>
+    <div class="pop-sub">Your message is on its way to Vishesh. Expect a WhatsApp reply shortly!</div>
+    <button class="pop-close" onclick="closePopup()">Close</button>
+  </div>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" onclick="closeMob()">✕</button>
+  <a href="#about" onclick="closeMob()">About</a>
+  <a href="#experience" onclick="closeMob()">Experience</a>
+  <a href="#skills" onclick="closeMob()">Skills</a>
+  <a href="#education" onclick="closeMob()">Education</a>
+  <a href="#contact" onclick="closeMob()">Contact</a>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a href="#hero" class="logo">V I S H E S H</a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-r">
+    <div class="clock-tag" id="clock">—</div>
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    <button class="hamburger" onclick="openMob()"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="h-bg"></div>
+  <div class="h-ov"></div>
+  <div class="h-c">
+    <div class="h-badge">Senior Sales Executive · 20 Years Experience</div>
+    <h1 class="h-name">VISHESH</h1>
+    <p class="h-tag">"Helping You To Find a New Better Way To Earn"</p>
+    <p class="h-meta">📍 Shahjahanpur, Uttar Pradesh &nbsp;·&nbsp; Age 40</p>
+    <div class="h-cta"><a href="#contact" class="btn-g">Let's Connect</a></div>
+  </div>
+  <div class="scroll-ind"><span>Scroll</span><div class="sdot"></div></div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="wrap">
+    <div class="ab-grid">
+      <div class="ab-img rv">
+        <img src="https://i.ibb.co/NbfVFnC/sung-jinwoo-dope-3840x2160-20241.jpg" alt="Vishesh"/>
+        <div class="ab-img-ov"></div>
+        <div class="ab-frame"></div>
+      </div>
+      <div class="rv" style="transition-delay:.14s">
+        <div class="s-label">About Me</div>
+        <h2 class="s-title">A Results-Driven<br/>Sales Leader</h2>
+        <div class="s-div"></div>
+        <p>A results-driven business course sales representative with <strong>20 years of experience</strong> in course acquisition, customer onboarding, and relationship management.</p>
+        <p>Specialized in identifying potential new business owners, understanding their unique needs, and matching them with the right <strong>AI-powered business solutions</strong>.</p>
+        <p>Currently leading <strong>16+ sales reps</strong> across India and managing a portfolio of <strong>6,000+ business owners</strong>.</p>
+        <div class="ab-links">
+          <a href="https://wa.me/919455028628" target="_blank" class="cp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="#EFBF04" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.975-1.405A9.944 9.944 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.944 7.944 0 01-4.072-1.12l-.292-.174-3.018.852.812-2.939-.19-.302A7.944 7.944 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>
+            +91 94550 28628
+          </a>
+          <a href="mailto:Teamtostar@gmail.com" class="cp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            Teamtostar@gmail.com
+          </a>
+          <a href="https://wa.me/919455028628" target="_blank" class="cp">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
+            Shahjahanpur, UP
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-label">Career Journey</div>
+      <h2 class="s-title">Work Experience</h2>
+      <div class="s-div"></div>
+    </div>
+    <div class="tl">
+      <div class="ti">
+        <div class="td"></div>
+        <div class="tc">
+          <div class="tc-co">White.Aura.Thrift</div>
+          <div class="tc-role">Senior Sales Executive — Business Ideas</div>
+          <div class="tc-period">📅 2021 — Present</div>
+          <ul class="tc-list">
+            <li>Leads a high-performance team of <strong>16+ sales representatives</strong> across India</li>
+            <li>Achieved <strong>160% of annual sales</strong> & AI acquisition target in 2023</li>
+            <li>Manages a portfolio of <strong>6,000+ business owners</strong> with sustained engagement</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ti">
+        <div class="td"></div>
+        <div class="tc">
+          <div class="tc-co">Multiverse.Merch</div>
+          <div class="tc-role">Sales Manager — Business Sales</div>
+          <div class="tc-period">📅 2018 — 2021</div>
+          <ul class="tc-list">
+            <li>Onboarded <strong>2,000+ new business owners</strong> across 3 years</li>
+            <li>Recognized as <strong>"Top Salesperson Q5 2020"</strong> — Southern Region</li>
+            <li>Conducted <strong>100+ corporate tie-up drives</strong> for bulk course issuance</li>
+          </ul>
+        </div>
+      </div>
+      <div class="ti">
+        <div class="td"></div>
+        <div class="tc">
+          <div class="tc-co">Spider.Web</div>
+          <div class="tc-role">Sales Associate — Retail Banking</div>
+          <div class="tc-period">📅 2015 — 2018</div>
+          <ul class="tc-list">
+            <li>Transitioned to business course sales within the very first year</li>
+            <li>Built a referral network generating <strong>50% of monthly leads</strong></li>
+            <li>Trained <strong>100+ new joiners</strong> on sales pitch and objection handling</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-label">Expertise</div>
+      <h2 class="s-title">Key Skills</h2>
+      <div class="s-div"></div>
+    </div>
+    <div class="sk-grid" id="skGrid">
+      <div class="sp">Business Course Sales & Acquisition</div>
+      <div class="sp">Lead Generation & Cold Outreach</div>
+      <div class="sp">Customer Need Analysis</div>
+      <div class="sp">Business Sales Documentation</div>
+      <div class="sp">Compliance Management</div>
+      <div class="sp">CRM — Salesforce</div>
+      <div class="sp">Team Leadership</div>
+      <div class="sp">Negotiation</div>
+      <div class="sp">Objection Handling</div>
+      <div class="sp">Corporate Tie-Ups</div>
+      <div class="sp">AI Business Solutions</div>
+      <div class="sp">Client Onboarding</div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-label">Qualifications</div>
+      <h2 class="s-title">Education & Certifications</h2>
+      <div class="s-div"></div>
+    </div>
+    <div class="ed-grid">
+      <div class="ec"><div class="ec-icon">🎓</div><div class="ec-deg">Bachelor of Commerce (B.Com)</div><div class="ec-sch">London University</div><div class="ec-yr">2015</div></div>
+      <div class="ec"><div class="ec-icon">📜</div><div class="ec-deg">ECBA</div><div class="ec-sch">Entry Certificate in Business Analysis</div><div class="ec-yr">International Certification</div></div>
+      <div class="ec"><div class="ec-icon">🏆</div><div class="ec-deg">CCBA</div><div class="ec-sch">Certification of Capability in Business Analysis</div><div class="ec-yr">International Certification</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <div class="rv">
+      <div class="s-label">Get In Touch</div>
+      <h2 class="s-title">Let's Start a Conversation</h2>
+      <div class="s-div"></div>
+    </div>
+    <div class="ct-wrap">
+      <div class="ct-info rv">
+        <h3>Ready to Transform<br/>Your Business?</h3>
+        <p>Whether you're a first-time entrepreneur or an established owner looking to scale, I'd love to connect you with the right AI-powered course and strategy.</p>
+        <div class="ii">
+          <div class="ii-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="#EFBF04" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.975-1.405A9.944 9.944 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.944 7.944 0 01-4.072-1.12l-.292-.174-3.018.852.812-2.939-.19-.302A7.944 7.944 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg></div>
+          <div><div class="ii-lbl">WhatsApp</div><a href="https://wa.me/919455028628" class="ii-val">+91 94550 28628</a></div>
+        </div>
+        <div class="ii">
+          <div class="ii-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+          <div><div class="ii-lbl">Email</div><a href="mailto:Teamtostar@gmail.com" class="ii-val">Teamtostar@gmail.com</a></div>
+        </div>
+        <div class="ii">
+          <div class="ii-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path fill="#EFBF04" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg></div>
+          <div><div class="ii-lbl">Location</div><span class="ii-val">Shahjahanpur, Uttar Pradesh</span></div>
+        </div>
+      </div>
+      <!-- FORM -->
+      <div class="cf rv" style="transition-delay:.15s">
+        <div class="fg">
+          <label for="fn">Full Name *</label>
+          <input type="text" id="fn" placeholder="Your full name" oninput="vField(this)"/>
+        </div>
+        <div class="fg">
+          <label for="fp">Phone Number *</label>
+          <input type="tel" id="fp" placeholder="+91 " onfocus="prefixPhone(this)" oninput="vPhone(this)"/>
+        </div>
+        <div class="fg">
+          <label for="fe">Email Address *</label>
+          <div class="email-wrap" style="position:relative">
+            <input type="text" id="fe" placeholder="yourname or email" oninput="handleEmail(this)" onblur="finalizeEmail(this)" autocomplete="off" style="padding-right:150px"/>
+            <div class="email-suffix" id="emailSuffix">
+              <span id="suffixText">@gmail.com</span>
+              <button class="es-close" onclick="removeSuffix()" title="Remove suggestion">✕</button>
+            </div>
+          </div>
+        </div>
+        <div class="fg">
+          <label for="fm">Your Message *</label>
+          <textarea id="fm" placeholder="Tell me about your business goals..." oninput="vMsg(this)"></textarea>
+        </div>
+        <button class="btn-wa" onclick="sendMsg()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path fill="currentColor" d="M12 2C6.477 2 2 6.477 2 12c0 1.89.525 3.66 1.438 5.168L2 22l4.975-1.405A9.944 9.944 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18a7.944 7.944 0 01-4.072-1.12l-.292-.174-3.018.852.812-2.939-.19-.302A7.944 7.944 0 014 12c0-4.418 3.582-8 8-8s8 3.582 8 8-3.582 8-8 8z"/></svg>
+          Send Message via WhatsApp
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="ft-name">VISHESH</div>
+  <div class="ft-sub">Business Course Sales Professional · Shahjahanpur, UP · © 2025</div>
+</footer>
+
+<script>
+/* ══════════ CURSOR ══════════ */
+const cur=document.getElementById('cur'),ring=document.getElementById('cur-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX;my=e.clientY;
+  cur.style.left=mx+'px';cur.style.top=my+'px';
+});
+(function animR(){rx+=(mx-rx)*.13;ry+=(my-ry)*.13;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animR)})();
+document.querySelectorAll('a,button,[onclick]').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.transform='translate(-50%,-50%) scale(1.8)';ring.style.width='54px';ring.style.height='54px'});
+  el.addEventListener('mouseleave',()=>{cur.style.transform='translate(-50%,-50%) scale(1)';ring.style.width='38px';ring.style.height='38px'});
+});
+
+/* ══════════ PIXEL LOADER ══════════ */
+(function(){
+  const canvas=document.getElementById('pixel-canvas');
+  const ctx=canvas.getContext('2d');
+  let W,H,cols,rows,pixels=[];
+  const TILE=22;
+  const COLORS=['#09186D','#0d2080','#EFBF04','#c9a000','#4D4C53','#1a1060','#0a0520','#f5d96b','#2a3590'];
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    cols=Math.ceil(W/TILE);rows=Math.ceil(H/TILE);
+    pixels=[];
+    for(let r=0;r<rows;r++) for(let c=0;c<cols;c++)
+      pixels.push({x:c*TILE,y:r*TILE,color:COLORS[Math.floor(Math.random()*COLORS.length)],alpha:Math.random()});
+  }
+  resize();window.addEventListener('resize',resize);
+  let frame=0,start=Date.now();
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const elapsed=(Date.now()-start)/1000;
+    pixels.forEach(p=>{
+      const flicker=.4+.6*Math.abs(Math.sin(elapsed*3+p.x*.04+p.y*.04));
+      ctx.fillStyle=p.color;ctx.globalAlpha=flicker*p.alpha;
+      ctx.fillRect(p.x,p.y,TILE-1,TILE-1);
+    });
+    /* random color swap */
+    if(frame%4===0){
+      const i=Math.floor(Math.random()*pixels.length);
+      pixels[i].color=COLORS[Math.floor(Math.random()*COLORS.length)];
+    }
+    ctx.globalAlpha=1;frame++;
+    if(elapsed<5.5) requestAnimationFrame(draw);
+  }
+  draw();
+  /* pct counter */
+  const pct=document.getElementById('ld-pct');
+  let p=0;
+  const ti=setInterval(()=>{p=Math.min(100,p+Math.floor(Math.random()*4)+2);pct.textContent=p+'%';if(p>=100)clearInterval(ti)},80);
+})();
+
+/* ══════════ GREETING by Kolkata time ══════════ */
+(function(){
+  const now=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const h=now.getHours();
+  let g='Good Evening';
+  if(h>=5&&h<12)g='Good Morning';
+  else if(h>=12&&h<17)g='Good Afternoon';
+  else if(h>=17&&h<21)g='Good Evening';
+  else g='Good Night';
+  document.getElementById('ld-greet').textContent=g+', Welcome!';
+})();
+
+/* ══════════ DISMISS LOADER ══════════ */
+window.addEventListener('load',()=>{
+  setTimeout(()=>{
+    const l=document.getElementById('loader');
+    l.classList.add('out');
+    setTimeout(()=>l.style.display='none',1100);
+  },5000);
+});
+
+/* ══════════ CLOCK ══════════ */
+function tick(){
+  const now=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Kolkata'}));
+  const h=String(now.getHours()).padStart(2,'0'),m=String(now.getMinutes()).padStart(2,'0'),s=String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('clock').textContent=`🕐 ${h}:${m}:${s} IST`;
+}
+tick();setInterval(tick,1000);
+
+/* ══════════ THEME ══════════ */
+function toggleTheme(){
+  const d=document.documentElement;
+  const dk=d.getAttribute('data-theme')==='dark';
+  d.setAttribute('data-theme',dk?'light':'dark');
+  document.getElementById('themeBtn').textContent=dk?'🌙':'☀️';
+}
+
+/* ══════════ MOBILE MENU ══════════ */
+function openMob(){document.getElementById('mobMenu').classList.add('open')}
+function closeMob(){document.getElementById('mobMenu').classList.remove('open')}
+
+/* ══════════ SCROLL REVEAL ══════════ */
+const obs=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')})},{threshold:.1});
+document.querySelectorAll('.rv,.ti,.sp,.ec').forEach(el=>obs.observe(el));
+document.querySelectorAll('#skGrid .sp').forEach((p,i)=>p.style.transitionDelay=i*.055+'s');
+document.querySelectorAll('.ec').forEach((c,i)=>c.style.transitionDelay=i*.1+'s');
+
+/* ══════════ FORM LOGIC ══════════ */
+let suffixRemoved=false;
+
+function prefixPhone(el){if(!el.value)el.value='+91 '}
+
+function vField(el){
+  const v=el.value.trim();
+  el.classList.toggle('ok',v.length>1);
+  el.classList.toggle('err',v.length===1);
+}
+function vMsg(el){
+  const v=el.value.trim();
+  el.classList.toggle('ok',v.length>2);
+  el.classList.toggle('err',v.length>0&&v.length<=2);
+}
+function vPhone(el){
+  if(!el.value.startsWith('+91'))el.value='+91 '+el.value.replace(/^\+91\s*/,'');
+  const d=el.value.replace(/\D/g,'');
+  const ok=d.length===12;
+  el.classList.toggle('ok',ok);
+  el.classList.toggle('err',!ok&&d.length>2);
+  if(!ok&&d.length>2)showToast('Sorry, your contact number is wrong.');
+}
+
+/* email: show @gmail.com suggestion if no @ entered */
+function handleEmail(el){
+  const v=el.value;
+  const suf=document.getElementById('emailSuffix');
+  if(!suffixRemoved && v.length>0 && !v.includes('@')){
+    suf.classList.add('active');
+  } else if(v.includes('@')||v.length===0){
+    suf.classList.remove('active');
+  }
+  /* validate full email */
+  if(v.includes('@')){
+    const ok=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+    el.classList.toggle('ok',ok);
+    el.classList.toggle('err',!ok&&v.length>5);
+    if(!ok&&v.length>5)showToast('Sorry, your email is wrong.');
+  } else {
+    el.classList.remove('ok','err');
+  }
+}
+function finalizeEmail(el){
+  /* on blur: if suggestion active and no @, append @gmail.com */
+  const suf=document.getElementById('emailSuffix');
+  if(suf.classList.contains('active')&&!el.value.includes('@')&&el.value.length>0){
+    el.value=el.value+'@gmail.com';
+    suf.classList.remove('active');
+    el.classList.add('ok');el.classList.remove('err');
+  }
+}
+function removeSuffix(){
+  document.getElementById('emailSuffix').classList.remove('active');
+  suffixRemoved=true;
+  const el=document.getElementById('fe');
+  el.focus();
+}
+
+let toastT=null;
+function showToast(msg){clearTimeout(toastT);document.getElementById('toast-msg').textContent=msg;document.getElementById('toast').classList.add('show');toastT=setTimeout(closeToast,3000)}
+function closeToast(){document.getElementById('toast').classList.remove('show')}
+
+function sendMsg(){
+  const name=document.getElementById('fn').value.trim();
+  let phone=document.getElementById('fp').value.trim();
+  let email=document.getElementById('fe').value.trim();
+  const msg=document.getElementById('fm').value.trim();
+  /* append @gmail.com if still missing */
+  if(email&&!email.includes('@'))email=email+'@gmail.com';
+  if(!name||!phone||!email||!msg){showToast('Please fill in all fields before sending.');return}
+  if(phone.replace(/\D/g,'').length<12){showToast('Sorry, your contact number is wrong.');return}
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Sorry, your email is wrong.');return}
+  const txt=encodeURIComponent(`Hello Vishesh!\n\nName: ${name}\nPhone: ${phone}\nEmail: ${email}\n\nMessage:\n${msg}`);
+  window.open(`https://wa.me/919455028628?text=${txt}`,'_blank');
+  document.getElementById('popup').classList.add('on');
+  ['fn','fp','fe','fm'].forEach(id=>{const e=document.getElementById(id);e.value='';e.classList.remove('ok','err')});
+  suffixRemoved=false;
+  document.getElementById('emailSuffix').classList.remove('active');
+}
+function closePopup(){document.getElementById('popup').classList.remove('on')}
+</script>
+</body>
+</html>
